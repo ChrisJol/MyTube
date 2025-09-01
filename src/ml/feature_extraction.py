@@ -9,19 +9,19 @@ def calculate_basic_video_metrics(video: Dict) -> Tuple:
     return (title_length, description_length, view_like_ratio, engagement_score)
 
 def detect_keyword_features_in_video(title: str, description: str) -> Tuple:
-    tutorial_keywords = ['tutorial', 'learn', 'course', 'guide', 'how to']
-    time_keywords = ['24 hours', '1 day', '1 hour', 'minutes', 'seconds', 'crash course']
-    beginner_keywords = ['beginner', 'start', 'basics', 'introduction', 'getting started']
-    ai_keywords = ['ai', 'artificial intelligence', 'machine learning', 'neural network']
-    challenge_keywords = ['challenge', 'build', 'create', 'project', 'coding']
+    tutorial_keywords = ['tutorial', 'learn', 'course', 'guide', 'how to', 'explained', 'walkthrough']
+    time_keywords = ['24 hours', '1 day', '1 hour', 'minutes', 'seconds', 'crash course', 'quick', 'fast']
+    beginner_keywords = ['beginner', 'start', 'basics', 'introduction', 'getting started', 'first time', 'new to']
+    tech_keywords = ['ai', 'artificial intelligence', 'machine learning', 'neural network', 'coding', 'programming', 'tech']
+    project_keywords = ['challenge', 'build', 'create', 'project', 'diy', 'make', 'workout', 'routine', 'recipe']
 
-    has_tutorial = any(kw in title or kw in description for kw in tutorial_keywords)
-    has_time_constraint = any(kw in title for kw in time_keywords)
-    has_beginner = any(kw in title or kw in description for kw in beginner_keywords)
-    has_ai = any(kw in title or kw in description for kw in ai_keywords)
-    has_challenge = any(kw in title for kw in challenge_keywords)
+    has_tutorial = any(kw in title.lower() or kw in description.lower() for kw in tutorial_keywords)
+    has_time_constraint = any(kw in title.lower() for kw in time_keywords)
+    has_beginner = any(kw in title.lower() or kw in description.lower() for kw in beginner_keywords)
+    has_tech = any(kw in title.lower() or kw in description.lower() for kw in tech_keywords)
+    has_project = any(kw in title.lower() for kw in project_keywords)
 
-    return (has_tutorial, has_time_constraint, has_beginner, has_ai, has_challenge)
+    return (has_tutorial, has_time_constraint, has_beginner, has_tech, has_project)
 
 def calculate_title_sentiment_score(title: str) -> float:
     positive_words = ['amazing', 'best', 'awesome', 'great', 'perfect', 'love', 'incredible']

@@ -8,7 +8,7 @@ def predict_video_preferences_with_model(model, video_features: pd.DataFrame) ->
     feature_columns = [
         'title_length', 'description_length', 'view_like_ratio', 'engagement_score',
         'title_sentiment', 'has_tutorial_keywords', 'has_time_constraint',
-        'has_beginner_keywords', 'has_ai_keywords', 'has_challenge_keywords'
+        'has_beginner_keywords', 'has_tech_keywords', 'has_project_keywords'
     ]
 
     X = video_features[feature_columns]

@@ -12,7 +12,7 @@ def train_model_on_user_preferences(model, training_data: pd.DataFrame) -> bool:
     feature_columns = [
         'title_length', 'description_length', 'view_like_ratio', 'engagement_score',
         'title_sentiment', 'has_tutorial_keywords', 'has_time_constraint',
-        'has_beginner_keywords', 'has_ai_keywords', 'has_challenge_keywords'
+        'has_beginner_keywords', 'has_tech_keywords', 'has_project_keywords'
     ]
 
     X = training_data[feature_columns]

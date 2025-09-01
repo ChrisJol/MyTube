@@ -46,8 +46,8 @@ def setup_database_tables(db_path: str):
             has_tutorial_keywords BOOLEAN,
             has_time_constraint BOOLEAN,
             has_beginner_keywords BOOLEAN,
-            has_ai_keywords BOOLEAN,
-            has_challenge_keywords BOOLEAN,
+            has_tech_keywords BOOLEAN,
+            has_project_keywords BOOLEAN,
             FOREIGN KEY (video_id) REFERENCES videos (id)
         )
     ''')

@@ -20,7 +20,7 @@ def get_video_details_from_youtube(api_key: str, video_ids: List[str]) -> List[D
         videos = []
         for item in data.get('items', []):
             video = parse_youtube_video_response(item)
-            if is_relevant_coding_video(video):
+            if is_relevant_video(video):
                 videos.append(video)
 
         return videos
@@ -49,19 +49,21 @@ def parse_youtube_video_response(item: Dict) -> Dict:
         'url': f"https://www.youtube.com/watch?v={item['id']}"
     }
 
-def is_relevant_coding_video(video: Dict) -> bool:
-    title = video['title'].lower()
-    description = video['description'].lower()
-
-    programming_keywords = [
-        'coding', 'programming', 'javascript', 'python', 'react', 'web development',
-        'tutorial', 'learn', 'build', 'create', 'app', 'website', 'algorithm', 'ai'
-    ]
-
-    if video['view_count'] < 100000:
+def is_relevant_video(video: Dict) -> bool:
+    """Filter videos based on general quality criteria, not content type."""
+    # Basic quality filters - no content-specific bias
+    if video['view_count'] < 10000:  # Lowered threshold for broader content
         return False
 
-    has_programming = any(keyword in title or keyword in description
-                        for keyword in programming_keywords)
+    # Filter out very short videos (likely not substantial content)
+    duration = video.get('duration', '')
+    if 'PT' in duration:
+        # Parse ISO 8601 duration format (PT1M30S = 1 minute 30 seconds)
+        import re
+        minutes = re.findall(r'(\d+)M', duration)
+        seconds = re.findall(r'(\d+)S', duration)
+        total_seconds = (int(minutes[0]) * 60 if minutes else 0) + (int(seconds[0]) if seconds else 0)
+        if total_seconds < 60:  # Skip videos under 1 minute
+            return False
 
-    return has_programming
+    return True

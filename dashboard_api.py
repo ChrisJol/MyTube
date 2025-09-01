@@ -95,8 +95,8 @@ class DashboardAPI:
                         'title_sentiment': row['title_sentiment'],
                         'has_tutorial_keywords': row['has_tutorial_keywords'],
                         'has_beginner_keywords': row['has_beginner_keywords'],
-                        'has_ai_keywords': row['has_ai_keywords'],
-                        'has_challenge_keywords': row['has_challenge_keywords'],
+                        'has_tech_keywords': row['has_tech_keywords'],
+                        'has_project_keywords': row['has_project_keywords'],
                         'has_time_constraint': row['has_time_constraint']
                     }
                     df_data.append(row_data)

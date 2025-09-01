@@ -1,6 +1,6 @@
 # Video Inspiration Finder 🎯
 
-An intelligent YouTube video recommendation system that learns your preferences to suggest coding videos you'll love. Built with machine learning and featuring a beautiful web dashboard.
+An intelligent YouTube video recommendation system that learns your preferences to suggest videos you'll love. Built with machine learning and featuring a beautiful web dashboard.
 
 ![Python](https://img.shields.io/badge/python-v3.7+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
@@ -8,7 +8,7 @@ An intelligent YouTube video recommendation system that learns your preferences 
 
 ## 🌟 Features
 
-- 🔍 **Smart YouTube Search**: Automatically finds trending coding videos using configurable search queries
+- 🔍 **Smart YouTube Search**: Automatically finds trending videos using configurable search queries
 - 🤖 **Machine Learning Recommendations**: RandomForest model learns your preferences from ratings
 - 📊 **Beautiful Web Dashboard**: YouTube-like interface with AI confidence scores
 - 🔒 **Privacy First**: All data stored locally in SQLite - no external tracking

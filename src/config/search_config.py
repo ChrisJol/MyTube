@@ -29,16 +29,16 @@ def get_default_queries() -> dict:
     """Fallback queries if config file is missing or invalid."""
     return {
         "search_queries": [
-            "programming tutorial",
-            "web development",
-            "coding basics",
-            "software engineering",
-            "tech tutorial",
-            "python programming",
-            "javascript tutorial",
-            "react development",
-            "database design",
-            "api development"
+            "tutorial",
+            "how to",
+            "guide",
+            "tips",
+            "review",
+            "explained",
+            "basics",
+            "beginner",
+            "learn",
+            "course"
         ]
     }
 
