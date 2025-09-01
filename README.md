@@ -76,27 +76,24 @@ video-idea-finder-algorithm/
 │   │   ├── manager.py     # Database setup and schema
 │   │   ├── video_operations.py    # Video data CRUD
 │   │   └── preference_operations.py # User ratings CRUD
-│   ├── youtube/           # YouTube API integration
-│   │   ├── search.py      # Video search functionality
-│   │   ├── details.py     # Video metadata retrieval
-│   │   └── utils.py       # Helper functions
 │   ├── ml/               # Machine learning pipeline
 │   │   ├── feature_extraction.py  # Video feature engineering
 │   │   ├── model_training.py      # ML model management
 │   │   └── predictions.py         # Recommendation engine
+│   ├── services/         # Business logic services
+│   │   ├── recommendation_service.py # Core recommendation service
+│   │   └── youtube_service.py    # YouTube API integration
 │   ├── rating/           # CLI rating system
 │   │   ├── display.py    # Video information display
 │   │   ├── session.py    # Rating session management
 │   │   └── user_input.py # User interaction handling
-│   └── web/              # Web application
+│   └── web/              # Web application layer
 │       ├── __init__.py   # Flask app factory
 │       ├── routes/       # Web page routes
 │       │   └── dashboard.py  # Dashboard routes
 │       ├── api/          # REST API endpoints
 │       │   ├── base.py   # Base API functionality
 │       │   └── videos.py # Video-related API endpoints
-│       ├── services/     # Web-specific services
-│       │   └── recommendation_service.py # ML recommendation service
 │       └── templates/    # HTML templates
 │           └── dashboard.html # Single-page application
 ├── app.py                # Single entry point for all commands
