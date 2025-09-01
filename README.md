@@ -106,8 +106,8 @@ video-idea-finder-algorithm/
 │   └── services/         # Business logic services
 │       └── recommendation_service.py # ML recommendation service
 ├── main.py               # CLI application entry point
-├── run.py                # Unified entry point (CLI + Web)
-├── search_more_videos.py # Additional video search utility
+├── run.py                # Unified entry point (CLI + Web + Search)
+├── reset_database.py     # Database reset utility
 ├── setup.sh             # First-time setup (creates venv, installs deps)
 ├── start.sh             # Quick launcher (starts web dashboard)
 ├── .env.example         # Environment template
