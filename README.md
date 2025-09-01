@@ -8,28 +8,6 @@ An intelligent YouTube video recommendation system that learns your preferences 
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Contributions welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)
 
-## 🌟 Features
-
-### 🎯 AI-Powered Recommendations
-
-- 🔍 **Smart YouTube Search**: Automatically finds trending videos using configurable search queries
-- 🤖 **Machine Learning**: RandomForest model learns your preferences from ratings
-- 📊 **Confidence Scores**: See how confident the AI is about each recommendation
-- 🎯 **Real-time Learning**: Model updates instantly as you rate more videos
-
-### 🚀 Modern Architecture
-
-- ⚡ **Vue 3 SPA**: Reactive frontend with component architecture
-- 🔌 **Flask API**: Pure REST API backend with no template coupling
-- 🛠️ **Modern Tooling**: Vite build system with hot reload
-- 📱 **Responsive Design**: Works perfectly on desktop and mobile
-
-### 🔒 Privacy & Control
-
-- 🏠 **Local-First**: All data stored locally in SQLite - no external tracking
-- ⚙️ **Configurable**: Customize search queries and ML parameters
-- 🔧 **Flexible Deployment**: Single app or separate frontend/backend
-
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -58,6 +36,29 @@ The app will automatically:
 1. Build the Vue 3 frontend if needed
 2. Search for and load initial videos
 3. Open your browser to the dashboard
+
+### Setup
+
+1. **Get YouTube API Key**:
+
+   - Visit [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a project or select existing one
+   - Enable YouTube Data API v3
+   - Create credentials (API key)
+
+2. **Set up environment**:
+
+   ```bash
+   # Copy the example environment file
+   cp .env.example .env
+
+   # Edit .env and add your API key
+   YOUTUBE_API_KEY=your_actual_api_key_here
+   ```
+
+3. **Customize your search queries**:
+   - Edit `config/search_queries.json` to add search terms relevant to your interests
+   - Example: `"python machine learning"`, `"react tutorial"`, etc.
 
 ## 🛠️ Development Modes
 
@@ -88,90 +89,6 @@ python app.py dev
 python app.py run --dev
 # → Alternative way to start Vue dev server
 ```
-
-## 🏗️ Architecture
-
-### Modern Vue 3 + Flask API
-
-```
-MyTube/
-├── frontend/                    # 🎯 Vue 3 Single Page Application
-│   ├── src/
-│   │   ├── App.vue             # Main Vue application
-│   │   ├── main.js             # Vue app entry point
-│   │   ├── components/         # Vue Single File Components
-│   │   │   ├── AppHeader.vue   # Navigation header
-│   │   │   ├── StatusBar.vue   # AI status display
-│   │   │   ├── VideoGrid.vue   # Video container
-│   │   │   ├── VideoCard.vue   # Individual video cards
-│   │   │   └── ErrorDisplay.vue # Error handling
-│   │   ├── api/                # API communication layer
-│   │   ├── utils/              # Helper functions
-│   │   └── css/                # Organized component styles
-│   ├── dist/                   # Built assets (Flask serves these)
-│   ├── package.json
-│   └── vite.config.js          # Vite configuration
-├── src/                        # 🔌 Pure Flask API Backend
-│   ├── web/
-│   │   ├── __init__.py         # Flask app factory
-│   │   ├── config.py           # Flexible configuration
-│   │   ├── routes/             # SPA serving routes
-│   │   └── api/                # REST API endpoints
-│   ├── ml/                     # Machine learning pipeline
-│   ├── services/               # Business logic
-│   └── database/               # Data operations
-├── app.py                      # Main entry point
-├── dev.py                      # Flexible development server
-└── .env                        # Configuration
-```
-
-### Key Benefits
-
-- **🔥 Hot Reload**: Vue development server with instant updates
-- **🎯 Component Architecture**: Reusable, maintainable Vue components
-- **🔌 API-First**: Backend is pure API, frontend consumes it
-- **⚡ No Template Coupling**: Frontend and backend completely independent
-- **🚀 Flexible Deployment**: Can deploy together or separately
-
-## ⚙️ Configuration
-
-1. **Get YouTube API Key**:
-
-   - Visit [Google Cloud Console](https://console.cloud.google.com/)
-   - Create a project or select existing one
-   - Enable YouTube Data API v3
-   - Create credentials (API key)
-
-2. **Set up environment**:
-
-   ```bash
-   # Copy the example environment file
-   cp .env.example .env
-
-   # Edit .env and add your API key
-   YOUTUBE_API_KEY=your_actual_api_key_here
-   ```
-
-3. **Customize your search queries**:
-   - Edit `config/search_queries.json` to add search terms relevant to your interests
-   - Example: `"python machine learning"`, `"react tutorial"`, etc.
-
-## 🎨 Dashboard Features
-
-### Vue 3 Reactive Interface
-
-- **🎯 Smart Views**: Rate Videos vs MyTube (curated favorites)
-- **⚡ Real-time Updates**: Reactive UI updates without page refreshes
-- **🤖 AI Status Bar**: Live model training progress and confidence metrics
-- **📱 Responsive Grid**: YouTube-like video cards that work on any device
-
-### Advanced Features
-
-- **🔥 Hot Reload Development**: Instant updates during development
-- **🎨 Component Architecture**: Modular, reusable Vue components
-- **🔔 Smart Notifications**: Toast notifications for user feedback
-- **❌ Graceful Error Handling**: Different error states with helpful messages
-- **🔄 Auto-refresh**: Keeps recommendations fresh automatically
 
 ## 🧠 How the AI Works
 
@@ -217,25 +134,6 @@ python app.py search
 
 # Custom Flask options
 python app.py --port 3000 --debug --no-browser
-```
-
-### Development Commands
-
-```bash
-# Vue development (hot reload)
-python app.py dev                  # Vue dev server only
-python app.py run --dev           # Alternative Vue dev mode
-
-# Production with build options
-python app.py run --build         # Force rebuild frontend
-python app.py run --port 9000     # Custom port
-
-# Frontend development (direct)
-cd frontend
-npm run dev        # Vue dev server with hot reload
-npm run build      # Build for production
-npm run preview    # Preview production build
-npm run lint       # Check code quality
 ```
 
 ## 🚀 Deployment Options
