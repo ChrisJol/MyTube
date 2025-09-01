@@ -2,17 +2,24 @@ from flask import Flask
 from flask_cors import CORS
 import os
 from dotenv import load_dotenv
+from .config import config
 
-def create_app():
+def create_app(config_name=None):
     """Flask application factory"""
     load_dotenv()
 
-    app = Flask(__name__, template_folder='templates')
+    # Get configuration
+    config_name = config_name or os.getenv('FLASK_ENV', 'default')
+    app_config = config[config_name]
+
+    # Configure Flask to serve Vue SPA directly from dist folder
+    app = Flask(__name__,
+                static_folder=app_config.get_frontend_path(),
+                static_url_path='')
     CORS(app)
 
-    # Configuration
-    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
-    app.config['DATABASE_PATH'] = os.getenv('DATABASE_PATH', 'video_inspiration.db')
+    # Load configuration
+    app.config.from_object(app_config)
 
     # Register blueprints
     from .routes.dashboard import dashboard_bp

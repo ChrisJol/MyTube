@@ -251,6 +251,43 @@ def run_search():
         print("   This might be due to YouTube API quota limits or network issues.")
         print("   API quotas reset daily. Try again later.")
 
+def check_frontend_built():
+    """Check if the frontend is built"""
+    dist_path = Path('frontend/dist')
+    return dist_path.exists() and (dist_path / 'index.html').exists()
+
+def build_frontend():
+    """Build the frontend"""
+    print("🔨 Building Vue frontend...")
+    try:
+        subprocess.run(['npm', 'run', 'build'], cwd='frontend', check=True)
+        print("✅ Frontend built successfully!")
+        return True
+    except subprocess.CalledProcessError:
+        print("❌ Frontend build failed!")
+        return False
+    except FileNotFoundError:
+        print("❌ npm not found. Make sure Node.js is installed.")
+        print("💡 Install Node.js and run: cd frontend && npm install")
+        return False
+
+def start_vue_dev_server():
+    """Start Vue development server"""
+    print("🔥 Vue Development Mode")
+    print("=======================")
+    print("📱 Vue app will be available at: http://localhost:3000")
+    print("🔌 API calls will be proxied to Flask backend")
+    print("📝 Note: Start Flask API separately with: python app.py --port 8000")
+    print("🛑 Press Ctrl+C to stop")
+    print("-" * 50)
+    try:
+        subprocess.run(['npm', 'run', 'dev'], cwd='frontend')
+    except KeyboardInterrupt:
+        print("\n👋 Vue dev server stopped!")
+    except FileNotFoundError:
+        print("❌ npm not found. Make sure Node.js is installed.")
+        print("💡 Run: cd frontend && npm install")
+
 def ensure_venv():
     """Ensure we're running in the virtual environment"""
     if Path("venv").exists() and not sys.executable.startswith(str(Path("venv").absolute())):
@@ -273,10 +310,14 @@ Commands:
   install                      # Install dependencies and set up
   run                         # Start web dashboard (default)
   search                      # Search for more videos
+  dev                         # Start Vue development server
 
 Examples:
   python app.py install       # First-time setup
-  python app.py run           # Start web dashboard
+  python app.py run           # Start web dashboard (production)
+  python app.py dev           # Vue development server
+  python app.py run --dev     # Vue development server (alternative)
+  python app.py run --build   # Force rebuild frontend
   python app.py run --port 3000 --debug  # Custom options
   python app.py search        # Search for videos
         """
@@ -286,7 +327,7 @@ Examples:
         'command',
         nargs='?',
         default='run',
-        choices=['install', 'run', 'search'],
+        choices=['install', 'run', 'search', 'dev'],
         help='Command to execute (default: run)'
     )
     
@@ -304,9 +345,21 @@ Examples:
     )
     
     parser.add_argument(
-        '--no-browser', 
+        '--no-browser',
         action='store_true',
         help='Don\'t auto-open browser for web mode'
+    )
+
+    parser.add_argument(
+        '--dev',
+        action='store_true',
+        help='Start Vue dev server instead of production build'
+    )
+
+    parser.add_argument(
+        '--build',
+        action='store_true',
+        help='Force rebuild frontend before starting'
     )
     
     args = parser.parse_args()
@@ -315,12 +368,21 @@ Examples:
         install()
     elif args.command == 'search':
         run_search()
+    elif args.command == 'dev':
+        start_vue_dev_server()
     elif args.command == 'run':
-        run_web(
-            port=args.port,
-            debug=args.debug,
-            auto_open=not args.no_browser
-        )
+        if args.dev:
+            start_vue_dev_server()
+        else:
+            # Production mode - ensure frontend is built
+            if args.build or not check_frontend_built():
+                if not build_frontend():
+                    print("⚠️  Frontend build failed, but continuing with Flask API...")
+            run_web(
+                port=args.port,
+                debug=args.debug,
+                auto_open=not args.no_browser
+            )
 
 if __name__ == "__main__":
     main()
