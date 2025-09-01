@@ -108,7 +108,7 @@ def check_has_videos():
 
 def run_web(port=8000, debug=False, auto_open=True):
     """Run the web dashboard"""
-    from src.web import create_app
+    from backend.web import create_app
 
     print("🚀 MyTube - Web Dashboard")
     print("=========================")
@@ -164,14 +164,14 @@ def _load_initial_videos():
     """Load initial videos when starting the web app for the first time"""
     import os
     from dotenv import load_dotenv
-    from src.database.manager import setup_database_tables
-    from src.database.video_operations import (
+    from backend.database.manager import setup_database_tables
+    from backend.database.video_operations import (
         save_videos_to_database,
         save_video_features_to_database,
     )
-    from src.services.youtube_service import YouTubeService
-    from src.ml.feature_extraction import extract_all_features_from_video
-    from src.config.search_config import get_search_queries
+    from backend.services.youtube_service import YouTubeService
+    from backend.ml.feature_extraction import extract_all_features_from_video
+    from backend.config.search_config import get_search_queries
 
     load_dotenv()
 
@@ -219,14 +219,14 @@ def run_search():
     """Search for videos and add them to the database"""
     import os
     from dotenv import load_dotenv
-    from src.database.manager import setup_database_tables
-    from src.database.video_operations import (
+    from backend.database.manager import setup_database_tables
+    from backend.database.video_operations import (
         save_videos_to_database,
         save_video_features_to_database,
     )
-    from src.services.youtube_service import YouTubeService
-    from src.ml.feature_extraction import extract_all_features_from_video
-    from src.config.search_config import get_search_queries
+    from backend.services.youtube_service import YouTubeService
+    from backend.ml.feature_extraction import extract_all_features_from_video
+    from backend.config.search_config import get_search_queries
     import random
 
     load_dotenv()
