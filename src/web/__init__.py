@@ -21,13 +21,28 @@ def create_app(config_name=None):
     # Load configuration
     app.config.from_object(app_config)
 
-    # Register blueprints
-    from .routes.dashboard import dashboard_bp
+    # Register API blueprints
     from .api.base import api_base_bp
     from .api.videos import videos_api_bp
 
-    app.register_blueprint(dashboard_bp)
     app.register_blueprint(api_base_bp)
     app.register_blueprint(videos_api_bp)
+
+    # Simple SPA routing - serve Vue app for all non-API routes
+    from flask import send_from_directory, jsonify
+
+    @app.route('/')
+    @app.route('/<path:path>')
+    def serve_spa(path=''):
+        """Serve Vue SPA for all routes except API"""
+        # API routes are handled by blueprints above
+        try:
+            return send_from_directory(app.static_folder, 'index.html')
+        except FileNotFoundError:
+            return jsonify({
+                'error': 'Frontend not built',
+                'message': 'Run "cd frontend && npm run build" to build the Vue application',
+                'frontend_path': app.static_folder
+            }), 404
 
     return app
