@@ -58,6 +58,12 @@ def install():
         print("")
         print("Get your API key at: https://console.developers.google.com/")
         print("")
+        print("📊 Quota Usage Info:")
+        print("   • YouTube API has a default quota of 10,000 units/day")
+        print("   • Each search uses ~108 quota units (search + video details)")
+        print("   • Initial app startup uses ~315 units (3 searches)")
+        print("   • 'python app.py search' uses ~324 units (3 searches)")
+        print("")
     
     print("✅ Installation complete!")
     print("")
@@ -152,16 +158,16 @@ def _load_initial_videos():
     youtube_service = YouTubeService(api_key)
     all_queries = get_search_queries()
 
-    # Use first 5 queries for initial load
-    initial_queries = all_queries[:5]
+    # Use first 3 queries for initial load to save quota
+    initial_queries = all_queries[:3]
     print(f"      Searching {len(initial_queries)} topics...")
 
     all_videos = []
     for query in initial_queries:
         try:
-            videos = youtube_service.search_and_get_details(query, 8)  # Fewer videos per query for initial load
+            videos = youtube_service.search_and_get_details(query, 5)  # Only 5 videos per query to save quota
             all_videos.extend(videos)
-            print(f"      Found {len(videos)} videos for '{query}'")
+            print(f"      Found {len(videos)} videos for '{query}' (quota used: ~105 units)")
         except Exception as e:
             print(f"      Warning: Could not search '{query}': {e}")
 
@@ -204,22 +210,23 @@ def run_search():
     all_queries = get_search_queries()
 
     # Use different queries for search vs initial load
-    if len(all_queries) > 5:
-        search_queries = all_queries[5:10]  # Use queries 5-10 for search command
+    if len(all_queries) > 3:
+        search_queries = all_queries[3:6]  # Use queries 3-6 for search command
     else:
         search_queries = all_queries.copy()
         random.shuffle(search_queries)
-        search_queries = search_queries[:5]  # Limit to 5 queries
+        search_queries = search_queries[:3]  # Limit to 3 queries
 
     print(f"🔍 Searching {len(search_queries)} topics for videos...")
+    print(f"   Estimated quota usage: ~{len(search_queries) * 110} units")
 
     all_videos = []
     for i, query in enumerate(search_queries, 1):
         print(f"  [{i}/{len(search_queries)}] Searching: {query}")
         try:
-            videos = youtube_service.search_and_get_details(query, 10)
+            videos = youtube_service.search_and_get_details(query, 8)  # Reduced from 10 to 8
             all_videos.extend(videos)
-            print(f"      Found {len(videos)} videos")
+            print(f"      Found {len(videos)} videos (quota used: ~108 units)")
         except Exception as e:
             print(f"      Error searching '{query}': {e}")
 
@@ -236,7 +243,9 @@ def run_search():
             features = extract_all_features_from_video(video)
             save_video_features_to_database(video['id'], features, db_path)
 
+        estimated_quota_used = len(search_queries) * 108
         print(f"✅ Successfully added {len(unique_videos)} videos to the database!")
+        print(f"   Estimated quota used: ~{estimated_quota_used} units")
     else:
         print("❌ No new videos found.")
         print("   This might be due to YouTube API quota limits or network issues.")

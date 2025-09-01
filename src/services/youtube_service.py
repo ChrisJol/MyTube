@@ -30,13 +30,16 @@ class YouTubeService:
             response = requests.get(search_url, params=params)
             data = response.json()
 
-            # Debug: Check for API errors
+            # Check for API errors
             if 'error' in data:
-                print(f"YouTube API Error: {data['error']}")
+                error_msg = data['error'].get('message', 'Unknown error')
+                if 'quota' in error_msg.lower():
+                    print(f"⚠️  YouTube API quota exceeded for query '{query}'")
+                else:
+                    print(f"YouTube API Error for '{query}': {error_msg}")
                 return []
 
             if 'items' not in data:
-                print(f"No items in response for query '{query}': {data}")
                 return []
 
             video_ids = [item['id']['videoId'] for item in data['items']]
