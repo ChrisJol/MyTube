@@ -47,9 +47,9 @@ class RecommendationService:
             return fallback_videos
 
     def _ensure_sufficient_videos(self):
-        """Automatically fetch more videos if we're running low"""
+        """Check if we have sufficient videos (auto-search disabled to save API quota)"""
         unrated_videos = get_unrated_videos_from_database(20, self.db_path)
-        
+
         if len(unrated_videos) < 5:
             print("🔍 Running low on videos, automatically searching for more...")
             self._search_more_videos()
