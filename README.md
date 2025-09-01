@@ -18,28 +18,22 @@ An intelligent YouTube video recommendation system that learns your preferences 
 
 ## 🚀 Quick Start
 
-### Option 1: Web Dashboard (Recommended)
-
 ```bash
 git clone https://github.com/yourusername/video-idea-finder-algorithm.git
 cd video-idea-finder-algorithm
-./setup.sh
-# Select option 1 for Dashboard
+
+# Install dependencies
+python app.py install
+
+# Start the web dashboard
+python app.py run
 ```
 
-### Option 2: Command Line Interface
-
-```bash
-./setup.sh
-# Select option 2 for CLI mode
-```
-
-The setup script will:
+The install command will:
 
 1. Create a Python virtual environment
 2. Install all dependencies
 3. Help you configure your YouTube API key
-4. Launch your preferred interface
 
 ## 📋 Prerequisites
 
@@ -105,11 +99,9 @@ video-idea-finder-algorithm/
 │       │   └── recommendation_service.py # ML recommendation service
 │       └── templates/    # HTML templates
 │           └── dashboard.html # Single-page application
+├── app.py                # Single entry point for all commands
 ├── main.py               # CLI application entry point
-├── run.py                # Unified entry point (CLI + Web + Search)
 ├── reset_database.py     # Database reset utility
-├── setup.sh             # First-time setup (creates venv, installs deps)
-├── start.sh             # Quick launcher (starts web dashboard)
 ├── .env.example         # Environment template
 └── README.md           # This file
 ```
@@ -142,17 +134,16 @@ The system extracts 11 key features from each video:
 ## 🖥️ Available Commands
 
 ```bash
-# First-time setup (creates venv, installs dependencies)
-./setup.sh
+# First-time setup
+python app.py install
 
-# Start web dashboard (quick launch)
-./start.sh
+# Start web dashboard (default)
+python app.py run
 
-# Manual commands (after setup)
-python run.py              # Web dashboard (default)
-python run.py cli          # CLI-only mode
-python run.py search       # Search for additional videos
-python run.py web --port 8000 --debug  # Custom options
+# Other commands
+python app.py cli           # CLI-only mode
+python app.py search        # Search for additional videos
+python app.py run --port 3000 --debug  # Custom options
 ```
 
 ## 🎨 Dashboard Features
