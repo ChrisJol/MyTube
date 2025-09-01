@@ -326,6 +326,105 @@
         text-align: center;
       }
 
+      /* Error States */
+      .error-state,
+      .empty-state {
+        text-align: center;
+        padding: 60px 40px;
+        max-width: 600px;
+        margin: 40px auto;
+        background: #1a1a1a;
+        border-radius: 12px;
+        border: 1px solid #333;
+      }
+
+      .error-icon,
+      .empty-icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+        display: block;
+      }
+
+      .error-state h3,
+      .empty-state h3 {
+        color: #fff;
+        font-size: 24px;
+        margin-bottom: 12px;
+        font-weight: 600;
+      }
+
+      .error-state p,
+      .empty-state p {
+        color: #ccc;
+        font-size: 16px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+      }
+
+      .error-actions,
+      .empty-actions {
+        margin-top: 24px;
+      }
+
+      .error-actions ul {
+        text-align: left;
+        display: inline-block;
+        margin: 16px 0;
+      }
+
+      .error-actions li {
+        color: #ccc;
+        margin: 8px 0;
+        padding-left: 8px;
+      }
+
+      .retry-btn {
+        background: #ff0000;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        margin: 8px;
+      }
+
+      .retry-btn:hover {
+        background: #cc0000;
+      }
+
+      .empty-actions code {
+        background: #333;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+        color: #ff6b6b;
+      }
+
+      /* Specific error type styling */
+      .quota-error .error-icon {
+        color: #ffa500;
+      }
+
+      .api-error .error-icon {
+        color: #ff6b6b;
+      }
+
+      .network-error .error-icon {
+        color: #4a9eff;
+      }
+
+      .error-actions a {
+        color: #ff6b6b;
+        text-decoration: none;
+      }
+
+      .error-actions a:hover {
+        text-decoration: underline;
+      }
+
       @media (max-width: 768px) {
         .search-container {
           margin: 0 16px;
@@ -423,9 +522,26 @@
           displayVideos(data.videos);
         } catch (error) {
           console.error("Error loading recommendations:", error);
-          document.getElementById(
-            "videoGrid"
-          ).innerHTML = `<div class="error">Failed to load recommendations: ${error.message}</div>`;
+
+          // Parse error message to determine type
+          let errorType = "unknown";
+          let errorMessage = error.message;
+
+          if (errorMessage.toLowerCase().includes("quota")) {
+            errorType = "quota_exceeded";
+          } else if (
+            errorMessage.toLowerCase().includes("api") &&
+            errorMessage.toLowerCase().includes("key")
+          ) {
+            errorType = "invalid_api_key";
+          } else if (
+            errorMessage.toLowerCase().includes("network") ||
+            errorMessage.toLowerCase().includes("fetch")
+          ) {
+            errorType = "network_error";
+          }
+
+          displayError(errorType, errorMessage);
         }
       }
 
@@ -457,12 +573,88 @@
         sectionTitle.style.display = "flex";
       }
 
+      function displayError(errorType, errorMessage) {
+        const videoGrid = document.getElementById("videoGrid");
+        let errorHTML = "";
+
+        switch (errorType) {
+          case "quota_exceeded":
+            errorHTML = `
+              <div class="error-state quota-error">
+                <div class="error-icon">⚠️</div>
+                <h3>YouTube API Quota Exceeded</h3>
+                <p>${errorMessage}</p>
+                <div class="error-actions">
+                  <p><strong>What you can do:</strong></p>
+                  <ul>
+                    <li>Wait for quota to reset (happens daily)</li>
+                    <li>Try again tomorrow</li>
+                    <li>Use a different YouTube API key if available</li>
+                  </ul>
+                </div>
+              </div>
+            `;
+            break;
+          case "invalid_api_key":
+            errorHTML = `
+              <div class="error-state api-error">
+                <div class="error-icon">🔑</div>
+                <h3>Invalid API Key</h3>
+                <p>${errorMessage}</p>
+                <div class="error-actions">
+                  <p><strong>To fix this:</strong></p>
+                  <ul>
+                    <li>Check your .env file has YOUTUBE_API_KEY</li>
+                    <li>Verify the API key is correct</li>
+                    <li>Get a new key at <a href="https://console.developers.google.com/" target="_blank">Google Console</a></li>
+                  </ul>
+                </div>
+              </div>
+            `;
+            break;
+          case "network_error":
+            errorHTML = `
+              <div class="error-state network-error">
+                <div class="error-icon">🌐</div>
+                <h3>Network Error</h3>
+                <p>${errorMessage}</p>
+                <div class="error-actions">
+                  <button onclick="loadRecommendations()" class="retry-btn">Try Again</button>
+                </div>
+              </div>
+            `;
+            break;
+          default:
+            errorHTML = `
+              <div class="error-state">
+                <div class="error-icon">❌</div>
+                <h3>Something went wrong</h3>
+                <p>${errorMessage}</p>
+                <div class="error-actions">
+                  <button onclick="loadRecommendations()" class="retry-btn">Try Again</button>
+                </div>
+              </div>
+            `;
+        }
+
+        videoGrid.innerHTML = errorHTML;
+      }
+
       function displayVideos(videos) {
         const videoGrid = document.getElementById("videoGrid");
 
         if (videos.length === 0) {
-          videoGrid.innerHTML =
-            '<div class="loading">No videos available. The app should automatically load videos on startup. If this persists, try running: python app.py search</div>';
+          videoGrid.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">📺</div>
+              <h3>No videos available</h3>
+              <p>The app should automatically load videos on startup.</p>
+              <div class="empty-actions">
+                <p>If this persists, try running: <code>python app.py search</code></p>
+                <button onclick="loadRecommendations()" class="retry-btn">Refresh</button>
+              </div>
+            </div>
+          `;
           return;
         }
 

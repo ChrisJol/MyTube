@@ -6,6 +6,8 @@ from ...database.preference_operations import get_training_data_from_database
 
 videos_api_bp = Blueprint('videos_api', __name__, url_prefix='/api')
 
+
+
 def get_recommendation_service():
     """Get a fresh recommendation service instance"""
     db_path = current_app.config.get('DATABASE_PATH', 'video_inspiration.db')
@@ -31,9 +33,25 @@ def get_recommendations():
         })
 
     except Exception as e:
+        error_msg = str(e).lower()
+        error_type = 'unknown'
+        user_message = str(e)
+
+        if 'quota' in error_msg or 'exceeded' in error_msg:
+            error_type = 'quota_exceeded'
+            user_message = 'YouTube API quota exceeded. Quotas reset daily - try again tomorrow!'
+        elif 'api' in error_msg and 'key' in error_msg:
+            error_type = 'invalid_api_key'
+            user_message = 'Invalid YouTube API key. Please check your .env file.'
+        elif 'network' in error_msg or 'connection' in error_msg:
+            error_type = 'network_error'
+            user_message = 'Network error. Please check your internet connection.'
+
         return jsonify({
             'success': False,
-            'error': str(e)
+            'error': user_message,
+            'error_type': error_type,
+            'videos': []
         }), 500
 
 @videos_api_bp.route('/rate', methods=['POST'])
