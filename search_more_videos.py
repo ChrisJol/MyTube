@@ -4,10 +4,13 @@ from dotenv import load_dotenv
 
 from src.database.manager import setup_database_tables
 from src.database.video_operations import save_videos_to_database, save_video_features_to_database
-from src.youtube.search import search_youtube_videos_by_query, get_coding_search_queries
+from src.youtube.search import search_youtube_videos_by_query
+import random
 from src.youtube.details import get_video_details_from_youtube
 from src.youtube.utils import remove_duplicate_videos
 from src.ml.feature_extraction import extract_all_features_from_video
+
+from src.config.search_config import get_search_queries
 
 load_dotenv()
 
@@ -20,22 +23,25 @@ def search_more_videos():
     db_path = "video_inspiration.db"
     setup_database_tables(db_path)
 
-    print("🔍 Searching for more coding videos...")
+    print("🔍 Searching for more videos...")
 
-    # Use different/additional search queries to find new videos
-    additional_queries = [
-        # Add your additional search queries here
-        # Examples:
-        # "python tutorial",
-        # "web development course",
-        # "coding interview prep",
-        # "javascript frameworks",
-        # "database tutorial"
-    ]
+    # Get all available queries and use different ones than the main app typically uses
+    all_queries = get_search_queries()
+
+    # The main app uses the first 5 queries, so let's use different ones
+    # If we have more than 5 queries, use the rest. Otherwise, shuffle and use all.
+    if len(all_queries) > 5:
+        search_queries = all_queries[5:]  # Skip the first 5 that main app uses
+    else:
+        # If we don't have many queries, shuffle them to get variety
+        search_queries = all_queries.copy()
+        random.shuffle(search_queries)
+
+    print(f"Using {len(search_queries)} search queries for discovery...")
 
     all_videos = []
 
-    for query in additional_queries:
+    for query in search_queries:
         print(f"  Searching: {query}")
         video_ids = search_youtube_videos_by_query(api_key, query, 10)
         videos = get_video_details_from_youtube(api_key, video_ids)

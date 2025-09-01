@@ -19,6 +19,7 @@ An intelligent YouTube video recommendation system that learns your preferences 
 ## 🚀 Quick Start
 
 ### Option 1: Web Dashboard (Recommended)
+
 ```bash
 git clone https://github.com/yourusername/video-idea-finder-algorithm.git
 cd video-idea-finder-algorithm
@@ -27,12 +28,14 @@ cd video-idea-finder-algorithm
 ```
 
 ### Option 2: Command Line Interface
+
 ```bash
 ./setup.sh
 # Select option 2 for CLI mode
 ```
 
 The setup script will:
+
 1. Create a Python virtual environment
 2. Install all dependencies
 3. Help you configure your YouTube API key
@@ -46,30 +49,35 @@ The setup script will:
 ## ⚙️ Configuration
 
 1. **Get YouTube API Key**:
+
    - Visit [Google Cloud Console](https://console.cloud.google.com/)
    - Create a project or select existing one
    - Enable YouTube Data API v3
    - Create credentials (API key)
 
 2. **Set up environment**:
+
    ```bash
    # Copy the example environment file
    cp .env.example .env
-   
+
    # Edit .env and add your API key
    YOUTUBE_API_KEY=your_actual_api_key_here
    ```
 
-3. **Add your search queries**:
-   - Edit `src/youtube/search.py` in the `get_coding_search_queries()` function
-   - Add search terms relevant to your interests
+3. **Customize your search queries**:
+   - Edit `config/search_queries.json` to add search terms relevant to your interests
    - Example: `"python machine learning"`, `"react tutorial"`, etc.
 
 ## 🏗️ Project Structure
 
 ```
 video-idea-finder-algorithm/
+├── config/
+│   └── search_queries.json    # Centralized search query configuration
 ├── src/
+│   ├── config/             # Configuration management
+│   │   └── search_config.py   # Search query loader
 │   ├── database/           # SQLite database operations
 │   │   ├── manager.py      # Database setup and schema
 │   │   ├── video_operations.py    # Video data CRUD
@@ -100,13 +108,16 @@ video-idea-finder-algorithm/
 ## 🧠 How the AI Works
 
 ### Feature Engineering
+
 The system extracts 11 key features from each video:
+
 - **Content Features**: Title length, description length, keyword presence
 - **Engagement Metrics**: View count, like ratio, engagement score
 - **Semantic Analysis**: Title sentiment, tutorial/beginner/AI keyword detection
 - **Behavioral Patterns**: Time constraints, challenge keywords
 
 ### Machine Learning Pipeline
+
 1. **Data Collection**: YouTube API provides video metadata
 2. **Feature Extraction**: Convert raw video data into numerical features
 3. **User Feedback**: Collect like/dislike ratings with optional notes
@@ -114,6 +125,7 @@ The system extracts 11 key features from each video:
 5. **Prediction**: Generate confidence scores for new videos
 
 ### Learning Process
+
 - **Cold Start**: Shows random videos until you have 10+ ratings
 - **Warm Start**: AI model activates and provides personalized recommendations
 - **Continuous Learning**: Model retrains after each new rating
@@ -149,19 +161,32 @@ python dashboard_api.py
 ## 🔧 Customization
 
 ### Search Queries
-Edit the search queries in `src/youtube/search.py`:
-```python
-def get_coding_search_queries() -> List[str]:
-    return [
-        "python machine learning tutorial",
-        "javascript react project",
-        "web development 2024",
-        # Add your own search terms
-    ]
+
+Edit the search queries in `config/search_queries.json`:
+
+```json
+{
+  "search_queries": [
+    "python machine learning tutorial",
+    "javascript react project",
+    "web development 2024",
+    "coding interview prep",
+    "system design tutorial",
+    "database optimization"
+  ]
+}
 ```
 
+The system intelligently uses different queries for different purposes:
+
+- **Initial search**: Uses the first few queries when the app starts
+- **More videos**: Uses remaining queries when you need more videos to rate
+- **Smart rotation**: Automatically avoids repeating the same searches
+
 ### ML Model Parameters
+
 Modify model settings in `src/ml/model_training.py`:
+
 ```python
 model = RandomForestClassifier(
     n_estimators=100,        # Number of trees
@@ -183,6 +208,7 @@ We welcome contributions! Here's how you can help:
 6. **Open a Pull Request**
 
 ### Development Setup
+
 ```bash
 # Clone your fork
 git clone https://github.com/yourusername/video-idea-finder-algorithm.git
@@ -212,6 +238,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📚 Learn More
 
 This project demonstrates several key concepts:
+
 - **API Integration**: YouTube Data API v3 usage
 - **Machine Learning**: Feature engineering and model training
 - **Web Development**: Flask API and responsive frontend
@@ -225,18 +252,22 @@ Perfect for learning about ML-powered recommendation systems!
 ### Common Issues
 
 **API Key Issues**:
+
 - Ensure your YouTube API key is valid and has quota remaining
 - Check that YouTube Data API v3 is enabled in Google Cloud Console
 
 **Database Issues**:
+
 - Delete `video_inspiration.db` to reset the database
 - Run `./setup.sh` again to reinitialize
 
 **Import Errors**:
+
 - Activate the virtual environment: `source venv/bin/activate`
 - Reinstall dependencies: `pip install -r requirements.txt`
 
 **Port Conflicts**:
+
 - Dashboard runs on port 5001 by default
 - Change the port in `dashboard_api.py` if needed
 

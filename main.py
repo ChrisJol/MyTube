@@ -5,9 +5,11 @@ from src.database.manager import setup_database_tables
 from src.database.video_operations import save_videos_to_database, save_video_features_to_database, get_unrated_videos_from_database
 from src.database.preference_operations import save_video_rating_to_database, get_training_data_from_database, get_unrated_videos_with_features_from_database, get_rated_count_from_database
 
-from src.youtube.search import search_youtube_videos_by_query, get_coding_search_queries
+from src.youtube.search import search_youtube_videos_by_query
 from src.youtube.details import get_video_details_from_youtube
 from src.youtube.utils import remove_duplicate_videos
+
+from src.config.search_config import get_search_queries
 
 from src.ml.feature_extraction import extract_all_features_from_video
 from src.ml.model_training import create_recommendation_model, train_model_on_user_preferences
@@ -28,11 +30,11 @@ class VideoInspirationFinderApp:
         
         setup_database_tables(self.db_path)
 
-    def search_and_save_coding_videos(self):
-        print("🔍 Searching for coding videos...")
+    def search_and_save_videos(self):
+        print("🔍 Searching for videos...")
         
         all_videos = []
-        search_queries = get_coding_search_queries()
+        search_queries = get_search_queries()
         
         for query in search_queries[:5]:
             video_ids = search_youtube_videos_by_query(self.api_key, query, 10)
@@ -60,8 +62,17 @@ class VideoInspirationFinderApp:
             print(f"\n{session_message}")
             
             if not has_videos_to_rate(videos):
-                print("No more videos to rate!")
-                break
+                # Check if we need more ratings for ML training
+                if rated_count < 10:
+                    print("No more videos to rate! Searching for more videos...")
+                    self.search_and_save_videos()
+                    videos = self._get_videos_for_rating()
+                    if not has_videos_to_rate(videos):
+                        print("Still no videos found. You may need to run search_more_videos.py")
+                        break
+                else:
+                    print("No more videos to rate!")
+                    break
             
             for video in videos:
                 display_video_information_for_rating(video)
@@ -86,7 +97,7 @@ class VideoInspirationFinderApp:
 
     def _try_train_model(self):
         if not self.model_trained:
-            if not self.model:
+            if self.model is None:
                 self.model = create_recommendation_model()
             
             training_data = get_training_data_from_database(self.db_path)
@@ -102,7 +113,7 @@ def main():
         return
     
     app = VideoInspirationFinderApp(api_key)
-    app.search_and_save_coding_videos()
+    app.search_and_save_videos()
     app.start_interactive_rating_session()
 
 if __name__ == "__main__":

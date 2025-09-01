@@ -27,14 +27,3 @@ def search_youtube_videos_by_query(api_key: str, query: str, max_results: int) -
     except Exception as e:
         print(f"Error searching videos: {e}")
         return []
-
-def get_coding_search_queries() -> List[str]:
-    return [
-        # Add your own search queries here
-        # Examples:
-        # "python tutorial",
-        # "javascript project",
-        # "machine learning basics",
-        # "web development",
-        # "coding interview prep"
-    ]
