@@ -42,85 +42,45 @@ echo "📚 Installing dependencies..."
 
 echo "✅ Setup complete!"
 
-# ---- helper funcs unchanged (sqlite3 checks) ----
-check_videos() {
-  if [ -f "video_inspiration.db" ]; then
-    sqlite3 video_inspiration.db "SELECT COUNT(*) FROM videos;" 2>/dev/null || echo "0"
-  else
-    echo "0"
-  fi
-}
-
-check_unrated_videos() {
-  if [ -f "video_inspiration.db" ]; then
-    sqlite3 video_inspiration.db "SELECT COUNT(*) FROM videos v LEFT JOIN preferences p ON v.id = p.video_id WHERE p.video_id IS NULL;" 2>/dev/null || echo "0"
-  else
-    echo "0"
-  fi
-}
-
-# ---- main menu (use $VENV_PY instead of 'python') ----
-video_count="$(check_videos)"
-unrated_count="$(check_unrated_videos)"
-
+# ---- Auto-launch dashboard ----
 echo ""
-echo "📊 Current Status:"
-echo "   Total videos: $video_count"
-echo "   Unrated videos: $unrated_count"
-echo ""
+echo "🚀 Starting Video Inspiration Dashboard..."
 
-echo "Choose what you want to do:"
-echo "1. 🌐 Launch Dashboard (recommended)"
-echo "2. 📱 Interactive CLI Rating Session"  
-echo "3. 🔍 Search for More Videos"
-echo "4. 🛠️ Full Setup (Search + Rate + Dashboard)"
-echo ""
-read -p "Enter choice (1-4): " choice
+# Check if we have videos, and search for some if we don't
+video_count="0"
+if [ -f "video_inspiration.db" ]; then
+  video_count="$(sqlite3 video_inspiration.db "SELECT COUNT(*) FROM videos;" 2>/dev/null || echo "0")"
+fi
 
-case "$choice" in
-  1)
-    echo ""
-    echo "🌐 Launching Dashboard..."
-    if [ "$unrated_count" -eq "0" ] && [ "$video_count" -gt "0" ]; then
-      echo "⚠️  All videos are rated. Searching for more videos first..."
-      "$VENV_PY" search_more_videos.py
-    elif [ "$video_count" -eq "0" ]; then
-      echo "⚠️  No videos found. Searching for videos first..."
-      "$VENV_PY" main.py --search-only 2>/dev/null || "$VENV_PY" search_more_videos.py
-    fi
-    echo ""
-    echo "📱 Dashboard will be available at: http://localhost:5001"
-    echo "🛑 Press Ctrl+C to stop the server"
-    echo "----------------------------------------"
-    "$VENV_PY" dashboard_api.py
-    ;;
-  2)
-    echo ""
-    echo "📱 Starting Interactive Rating Session..."
-    "$VENV_PY" main.py
-    ;;
-  3)
-    echo ""
-    echo "🔍 Searching for more videos..."
-    "$VENV_PY" search_more_videos.py
-    echo ""
-    echo "✅ Search complete! You can now:"
-    echo "   • Run './setup.sh' again and choose option 1 for Dashboard"
-    echo "   • Run '$VENV_PY dashboard_api.py' directly"
-    ;;
-  4)
-    echo ""
-    echo "🛠️  Running Full Setup..."
-    echo "🔍 Step 1: Searching for videos..."
-    "$VENV_PY" main.py --search-only 2>/dev/null || "$VENV_PY" search_more_videos.py
-    echo ""
-    echo "📱 Step 2: Starting rating session..."
-    echo "💡 Tip: Rate at least 10 videos to activate AI recommendations"
-    echo "   (You can press 'q' anytime to skip to dashboard)"
-    "$VENV_PY" main.py
-    ;;
-  *)
-    echo "❌ Invalid choice. Please run './setup.sh' again."
-    exit 1
-    ;;
-esac
+if [ "$video_count" -eq "0" ]; then
+  echo "� No videos found. Searching for initial videos..."
+  "$VENV_PY" search_more_videos.py
+  echo ""
+fi
+
+echo "🌐 Opening dashboard in your browser..."
+echo "📱 Dashboard URL: http://localhost:5001"
+echo ""
+echo "� How to use:"
+echo "   • Rate videos by clicking 👍 or 👎"
+echo "   • The AI learns from your ratings and improves recommendations"
+echo "   • More videos are automatically fetched as needed"
+echo "   • Training happens automatically - no minimum required!"
+echo ""
+echo "🛑 Press Ctrl+C to stop the server"
+echo "----------------------------------------"
+
+# Try to open the dashboard in the default browser
+if command -v open >/dev/null 2>&1; then
+  # macOS
+  (sleep 2 && open "http://localhost:5001") &
+elif command -v xdg-open >/dev/null 2>&1; then
+  # Linux
+  (sleep 2 && xdg-open "http://localhost:5001") &
+elif command -v start >/dev/null 2>&1; then
+  # Windows
+  (sleep 2 && start "http://localhost:5001") &
+fi
+
+# Start the dashboard server
+"$VENV_PY" dashboard_api.py

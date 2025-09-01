@@ -24,7 +24,7 @@ class DashboardAPI:
 
     def _initialize_model(self):
         rated_count = get_rated_count_from_database(self.db_path)
-        if rated_count >= 10:
+        if rated_count >= 3:  # Start training with just 3 ratings for faster feedback
             self.model = create_recommendation_model()
             training_data = get_training_data_from_database(self.db_path)
             success = train_model_on_user_preferences(self.model, training_data)
@@ -32,6 +32,9 @@ class DashboardAPI:
                 self.model_trained = True
 
     def get_recommendations(self):
+        # Check if we need more videos and fetch them automatically
+        self._ensure_sufficient_videos()
+
         if self.model_trained and self.model:
             video_features = get_unrated_videos_with_features_from_database(self.db_path)
             recommendations = predict_video_preferences_with_model(self.model, video_features)
@@ -41,6 +44,62 @@ class DashboardAPI:
             for video in fallback_videos:
                 video['like_probability'] = 0.5  # Default probability
             return fallback_videos
+
+    def _ensure_sufficient_videos(self):
+        """Automatically fetch more videos if we're running low"""
+        unrated_videos = get_unrated_videos_from_database(20, self.db_path)  # Check for 20 videos
+
+        if len(unrated_videos) < 5:  # If we have fewer than 5 unrated videos, fetch more
+            print("🔍 Running low on videos, automatically searching for more...")
+            self._search_more_videos()
+
+    def _search_more_videos(self):
+        """Search for more videos using the search_more_videos functionality"""
+        try:
+            import os
+            from src.youtube.search import search_youtube_videos_by_query
+            from src.youtube.details import get_video_details_from_youtube
+            from src.youtube.utils import remove_duplicate_videos
+            from src.ml.feature_extraction import extract_all_features_from_video
+            from src.database.video_operations import save_videos_to_database, save_video_features_to_database
+            from src.config.search_config import get_search_queries
+            import random
+
+            api_key = os.getenv('YOUTUBE_API_KEY')
+            if not api_key:
+                print("Warning: No YouTube API key found, cannot fetch more videos")
+                return
+
+            # Get search queries (similar to search_more_videos.py logic)
+            all_queries = get_search_queries()
+            if len(all_queries) > 5:
+                search_queries = all_queries[5:]  # Skip the first 5 that main app uses
+            else:
+                search_queries = all_queries.copy()
+                random.shuffle(search_queries)
+
+            # Limit to 3 queries to avoid overwhelming the API
+            search_queries = search_queries[:3]
+
+            all_videos = []
+            for query in search_queries:
+                video_ids = search_youtube_videos_by_query(api_key, query, 10)
+                videos = get_video_details_from_youtube(api_key, video_ids)
+                all_videos.extend(videos)
+
+            unique_videos = remove_duplicate_videos(all_videos)
+
+            if unique_videos:
+                save_videos_to_database(unique_videos, self.db_path)
+
+                for video in unique_videos:
+                    features = extract_all_features_from_video(video)
+                    save_video_features_to_database(video['id'], features, self.db_path)
+
+                print(f"✅ Automatically found and saved {len(unique_videos)} new videos!")
+
+        except Exception as e:
+            print(f"Warning: Could not automatically fetch more videos: {e}")
     
     def get_liked_videos(self):
         """Get videos that user liked, ordered by AI match confidence"""
@@ -176,14 +235,14 @@ def rate_video():
         model_retrained = False
         rated_count = get_rated_count_from_database(dashboard_api.db_path)
         
-        if rated_count >= 10:  # Minimum ratings needed for training
+        if rated_count >= 3:  # Start training with just 3 ratings for faster feedback
             # Retrain the model with new data
             if not dashboard_api.model:
                 dashboard_api.model = create_recommendation_model()
-            
+
             training_data = get_training_data_from_database(dashboard_api.db_path)
             success = train_model_on_user_preferences(dashboard_api.model, training_data)
-            
+
             if success:
                 dashboard_api.model_trained = True
                 model_retrained = True
