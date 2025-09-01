@@ -6,16 +6,10 @@ from ...database.preference_operations import get_training_data_from_database
 
 videos_api_bp = Blueprint('videos_api', __name__, url_prefix='/api')
 
-# Global service instance
-recommendation_service = None
-
 def get_recommendation_service():
-    """Get or create the recommendation service instance"""
-    global recommendation_service
-    if recommendation_service is None:
-        db_path = current_app.config.get('DATABASE_PATH', 'video_inspiration.db')
-        recommendation_service = RecommendationService(db_path)
-    return recommendation_service
+    """Get a fresh recommendation service instance"""
+    db_path = current_app.config.get('DATABASE_PATH', 'video_inspiration.db')
+    return RecommendationService(db_path)
 
 @videos_api_bp.route('/recommendations')
 def get_recommendations():

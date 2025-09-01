@@ -30,14 +30,20 @@ class YouTubeService:
             response = requests.get(search_url, params=params)
             data = response.json()
 
+            # Debug: Check for API errors
+            if 'error' in data:
+                print(f"YouTube API Error: {data['error']}")
+                return []
+
             if 'items' not in data:
+                print(f"No items in response for query '{query}': {data}")
                 return []
 
             video_ids = [item['id']['videoId'] for item in data['items']]
             return video_ids
 
         except Exception as e:
-            print(f"Error searching videos: {e}")
+            print(f"Error searching videos for '{query}': {e}")
             return []
     
     def get_video_details(self, video_ids: List[str]) -> List[Dict]:

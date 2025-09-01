@@ -26,7 +26,7 @@ cd video-idea-finder-algorithm
 python app.py install
 
 # Start the web dashboard
-python app.py run
+python app.py
 ```
 
 The install command will:
@@ -34,6 +34,8 @@ The install command will:
 1. Create a Python virtual environment
 2. Install all dependencies
 3. Help you configure your YouTube API key
+
+When you first run the app, it will automatically search for and load initial videos into the database, so you can start rating videos immediately!
 
 ## 📋 Prerequisites
 
@@ -83,10 +85,6 @@ video-idea-finder-algorithm/
 │   ├── services/         # Business logic services
 │   │   ├── recommendation_service.py # Core recommendation service
 │   │   └── youtube_service.py    # YouTube API integration
-│   ├── rating/           # CLI rating system
-│   │   ├── display.py    # Video information display
-│   │   ├── session.py    # Rating session management
-│   │   └── user_input.py # User interaction handling
 │   └── web/              # Web application layer
 │       ├── __init__.py   # Flask app factory
 │       ├── routes/       # Web page routes
@@ -97,7 +95,6 @@ video-idea-finder-algorithm/
 │       └── templates/    # HTML templates
 │           └── dashboard.html # Single-page application
 ├── app.py                # Single entry point for all commands
-├── main.py               # CLI application entry point
 ├── reset_database.py     # Database reset utility
 ├── .env.example         # Environment template
 └── README.md           # This file
@@ -134,13 +131,14 @@ The system extracts 11 key features from each video:
 # First-time setup
 python app.py install
 
-# Start web dashboard (default)
-python app.py run
+# Start web dashboard (default) - automatically loads videos if database is empty
+python app.py
 
-# Other commands
-python app.py cli           # CLI-only mode
-python app.py search        # Search for additional videos
-python app.py run --port 3000 --debug  # Custom options
+# Search for additional videos (optional)
+python app.py search
+
+# Custom options
+python app.py run --port 3000 --debug
 ```
 
 ## 🎨 Dashboard Features
