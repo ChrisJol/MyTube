@@ -60,5 +60,9 @@ def search_more_videos():
     else:
         print("❌ No new videos found.")
 
-if __name__ == "__main__":
+def main():
+    """Main entry point for search_more_videos"""
     search_more_videos()
+
+if __name__ == "__main__":
+    main()

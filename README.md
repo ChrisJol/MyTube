@@ -96,11 +96,20 @@ video-idea-finder-algorithm/
 │       └── user_input.py   # User interaction handling
 ├── templates/             # Web dashboard frontend
 │   └── dashboard.html     # Single-page application
+├── app/                  # Web application package
+│   ├── __init__.py       # Flask app factory
+│   ├── routes/           # Web page routes
+│   │   └── dashboard.py  # Dashboard routes
+│   ├── api/              # REST API endpoints
+│   │   ├── base.py       # Base API functionality
+│   │   └── videos.py     # Video-related API endpoints
+│   └── services/         # Business logic services
+│       └── recommendation_service.py # ML recommendation service
 ├── main.py               # CLI application entry point
-├── dashboard_api.py      # Web API server
-├── run_dashboard.py      # Dashboard launcher
+├── run.py                # Unified entry point (CLI + Web)
 ├── search_more_videos.py # Additional video search utility
-├── setup.sh             # Automated setup script
+├── setup.sh             # First-time setup (creates venv, installs deps)
+├── start.sh             # Quick launcher (starts web dashboard)
 ├── .env.example         # Environment template
 └── README.md           # This file
 ```
@@ -133,20 +142,17 @@ The system extracts 11 key features from each video:
 ## 🖥️ Available Commands
 
 ```bash
-# Full interactive setup
+# First-time setup (creates venv, installs dependencies)
 ./setup.sh
 
-# CLI-only mode
-python main.py
+# Start web dashboard (quick launch)
+./start.sh
 
-# Web dashboard
-python run_dashboard.py
-
-# Search for additional videos
-python search_more_videos.py
-
-# Start API server directly
-python dashboard_api.py
+# Manual commands (after setup)
+python run.py              # Web dashboard (default)
+python run.py cli          # CLI-only mode
+python run.py search       # Search for additional videos
+python run.py web --port 8000 --debug  # Custom options
 ```
 
 ## 🎨 Dashboard Features
