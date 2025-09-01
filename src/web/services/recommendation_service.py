@@ -1,15 +1,15 @@
 import os
 import sqlite3
 import pandas as pd
-from src.database.manager import setup_database_tables
-from src.database.preference_operations import (
-    get_training_data_from_database, 
-    get_unrated_videos_with_features_from_database, 
+from ...database.manager import setup_database_tables
+from ...database.preference_operations import (
+    get_training_data_from_database,
+    get_unrated_videos_with_features_from_database,
     get_rated_count_from_database
 )
-from src.database.video_operations import get_unrated_videos_from_database
-from src.ml.model_training import create_recommendation_model, train_model_on_user_preferences
-from src.ml.predictions import predict_video_preferences_with_model
+from ...database.video_operations import get_unrated_videos_from_database
+from ...ml.model_training import create_recommendation_model, train_model_on_user_preferences
+from ...ml.predictions import predict_video_preferences_with_model
 
 class RecommendationService:
     """Service for handling video recommendations and ML model management"""
@@ -56,12 +56,12 @@ class RecommendationService:
     def _search_more_videos(self):
         """Search for more videos using the search_more_videos functionality"""
         try:
-            from src.youtube.search import search_youtube_videos_by_query
-            from src.youtube.details import get_video_details_from_youtube
-            from src.youtube.utils import remove_duplicate_videos
-            from src.ml.feature_extraction import extract_all_features_from_video
-            from src.database.video_operations import save_videos_to_database, save_video_features_to_database
-            from src.config.search_config import get_search_queries
+            from ...youtube.search import search_youtube_videos_by_query
+            from ...youtube.details import get_video_details_from_youtube
+            from ...youtube.utils import remove_duplicate_videos
+            from ...ml.feature_extraction import extract_all_features_from_video
+            from ...database.video_operations import save_videos_to_database, save_video_features_to_database
+            from ...config.search_config import get_search_queries
             import random
 
             api_key = os.getenv('YOUTUBE_API_KEY')

@@ -7,7 +7,7 @@ def create_app():
     """Flask application factory"""
     load_dotenv()
 
-    app = Flask(__name__, template_folder='../templates')
+    app = Flask(__name__, template_folder='templates')
     CORS(app)
 
     # Configuration

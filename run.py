@@ -35,7 +35,7 @@ def run_cli():
 
 def run_web(port=5000, debug=False, auto_open=True):
     """Run the web dashboard"""
-    from app import create_app
+    from src.web import create_app
     
     print("🚀 Video Inspiration Dashboard")
     print("=" * 40)

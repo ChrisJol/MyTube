@@ -1,13 +1,13 @@
 from flask import Blueprint, jsonify, request, current_app
-from src.database.preference_operations import (
+from ...database.preference_operations import (
     get_training_data_from_database,
     get_unrated_videos_with_features_from_database,
     get_rated_count_from_database,
     save_video_rating_to_database
 )
-from src.database.video_operations import get_unrated_videos_from_database
-from src.ml.model_training import create_recommendation_model, train_model_on_user_preferences
-from src.ml.predictions import predict_video_preferences_with_model
+from ...database.video_operations import get_unrated_videos_from_database
+from ...ml.model_training import create_recommendation_model, train_model_on_user_preferences
+from ...ml.predictions import predict_video_preferences_with_model
 from ..services.recommendation_service import RecommendationService
 
 videos_api_bp = Blueprint('videos_api', __name__, url_prefix='/api')
